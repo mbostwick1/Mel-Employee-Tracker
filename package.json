@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/mbostwick1/Mel-Employee-Tracker/issues"
   },
-  "homepage": "https://github.com/mbostwick1/Mel-Employee-Tracker#readme"
+  "homepage": "https://github.com/mbostwick1/Mel-Employee-Tracker#readme",
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
 }
