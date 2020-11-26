@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+const figlet = require("figlet");
 
 let roles;
 let departments;
@@ -17,6 +18,10 @@ var connection = mysql.createConnection({
   // Your password
   password: "Barkley42",
   database: "employee_db",
+});
+
+figlet("Employee Tracker", (err, result) => {
+  console.log(err || result);
 });
 
 connection.connect(function (err) {
@@ -42,9 +47,11 @@ start = () => {
         // console.log("add selected");
         add();
       } else if (answer.action === "VIEW") {
-        // view();
+        view();
       } else if (answer.action === "UPDATE") {
         // update();
+      } else if (answer.action === "EXIT") {
+        connection.end();
       } else {
         connection.end();
       }
@@ -210,14 +217,14 @@ addEmployee = () => {
         name: "manager_id",
         type: "input",
         message: "Enter employee's manager.",
-        choices: function() {
+        choices: function () {
           var choiceArray = [];
           for (var i = 0; i < managerOptions.length; i++) {
-            choiceArray.push(managerOptions[i].managers)
+            choiceArray.push(managerOptions[i].managers);
           }
           return choiceArray;
-        }
-      }
+        },
+      },
     ])
     .then(function (answer) {
       // console.log(answer.role_id);
@@ -248,4 +255,52 @@ addEmployee = () => {
 
 // VIEW FUNCTIONS
 
+view = () => {
+  inquirer
+    .prompt([
+      {
+        name: "view",
+        type: "list",
+        message: "Select what you would like to view.",
+        choices: ["DEPARTMENT", "ROLE", "EMPLOYEE", "EXIT"],
+      },
+    ])
+    .then((answer) => {
+      console.log(answer.view);
+      if (answer.view === "DEPARTMENT") {
+        viewDepartments();
+      } else if (answer.view === "ROLE") {
+        viewRoles();
+      } else if (answer.view === "EMPLOYEE") {
+        viewEmployees();
+      } else if (answer.view === "EXIT") {
+        // console.log("Exit.");
+        connection.end();
+      }
+    });
+};
+
+viewDepartments = () => {
+  connection.query("SELECT * FROM department", function(err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+};
+
+viewRoles = () => {
+  connection.query("SELECT * FROM role", function(err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+};
+
+viewEmployees = () => {
+  connection.query("SELECT * FROM employee", function(err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+};
 // UPDATE FUNCTIONS
