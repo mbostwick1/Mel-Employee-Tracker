@@ -49,7 +49,7 @@ start = () => {
         connection.end();
       }
     });
-}
+};
 
 getRoles = () => {
   connection.query("SELECT id, title FROM role", function (err, res) {
@@ -171,7 +171,17 @@ addRole = () => {
     });
 };
 
-function addEmployee() {
+addEmployee = () => {
+  let roleOptions = [];
+  for (i = 0; i < roles.length; i++) {
+    roleOptions.push(Object(roles[i]));
+    // console.log(roleOptions[i].title);
+  }
+  let managerOptions = [];
+  for (i = 0; i < managers.length; i++) {
+    managerOptions.push(Object(managers[i]));
+    console.log(managerOptions[i].managers);
+  }
   inquirer
     .prompt([
       {
@@ -186,25 +196,55 @@ function addEmployee() {
       },
       {
         name: "role_id",
-        type: "input",
-        message: "Enter employee role.",
+        type: "list",
+        message: "Select employee department.",
+        choices: function () {
+          var choiceArray = [];
+          for (var i = 0; i < roleOptions.length; i++) {
+            choiceArray.push(roleOptions[i].title);
+          }
+          return choiceArray;
+        },
       },
       {
         name: "manager_id",
         type: "input",
         message: "Enter employee's manager.",
-      },
+        choices: function() {
+          var choiceArray = [];
+          for (var i = 0; i < managerOptions.length; i++) {
+            choiceArray.push(managerOptions[i].managers)
+          }
+          return choiceArray;
+        }
+      }
     ])
     .then(function (answer) {
+      // console.log(answer.role_id);
+      // console.log(roleOptions);
+      for (i = 0; i < roleOptions.length; i++) {
+        if (roleOptions[i].title === answer.role_id) {
+          console.log(roleOptions[i].id);
+          role_id = roleOptions[i].id;
+          console.log(role_id);
+        }
+      }
+      // console.log(departmentOptions[i].id);
+      for (i = 0; i < managerOptions.length; i++) {
+        if (managerOptions[i].managers === answer.manager_id) {
+          manager_id = managerOptions[i].id;
+        }
+      }
+
       connection.query(
-        `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', '${answer.salary}', '${answer.department_id}')`,
+        `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}', '${answer.last_name}', ${role_id}, ${manager_id})`,
         function (err, res) {
           if (err) throw err;
           console.log("1 new role added: " + answer.title);
         }
       );
     });
-}
+};
 
 // VIEW FUNCTIONS
 
