@@ -206,12 +206,12 @@ addEmployee = () => {
   inquirer
     .prompt([
       {
-        name: "firstName",
+        name: "first_name",
         type: "input",
         message: "Enter employee first name.",
       },
       {
-        name: "lastName",
+        name: "last_name",
         type: "input",
         message: "Enter employee last name.",
       },
@@ -299,6 +299,9 @@ view = () => {
 viewDepartments = () => {
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
+    figlet("Department", (err, result) => {
+      console.log(err || result);
+    });
     printTable(res);
     start();
   });
@@ -309,6 +312,9 @@ viewRoles = () => {
     "SELECT  r.id, r.title, r.salary, d.name as Department_Name FROM role AS r INNER JOIN department AS d ON r.department_id = d.id",
     function (err, res) {
       if (err) throw err;
+      figlet("Roles", (err, result) => {
+        console.log(err || result);
+      });
       printTable(res);
       start();
     }
@@ -320,6 +326,9 @@ viewEmployees = () => {
     'SELECT e.id, e.first_name, e.last_name, d.name AS department, r.title, r.salary, CONCAT_WS(" ", m.first_name, m.last_name) AS manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id ORDER BY e.id ASC',
     function (err, res) {
       if (err) throw err;
+      figlet("Employees", (err, result) => {
+        console.log(err || result);
+      });
       printTable(res);
       start();
     }
